@@ -37,32 +37,20 @@ public class Inspector {
 
 		}
 		System.out.println("");
-		//obtain constructor
-		// not complete yet
-		Constructor constructor = null;
-		Constructor constructor1 = null;
-		try {
-			if (classObject.getConstructor() != null)
-				constructor = classObject.getConstructor();
-			//constructor1 = classObject.getConstructor(int.class);
-		} catch (NoSuchMethodException | SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		// Constructors
+		Constructor[] constructors = classObject.getConstructors();
+		System.out.println("Constructors:");
+		for (Constructor constructor : constructors){
+			int temp = constructor.getModifiers();
+			System.out.print("		" + constructor.getName() + "\n");
+			Class[] parameterList = constructor.getParameterTypes();
+			System.out.print("			Parameters:");
+			for(Class parameter : parameterList)
+				System.out.print(" " + parameter.getName() + ", ");
+			System.out.print("\n			Modifier: " + Modifier.toString(temp));
+			System.out.println();
 		}
-		if (constructor != null){
-			System.out.println("Constructor: " + constructor.getName());
-			Class[] parameters = constructor.getParameterTypes();
-			for (Class parameter : parameters)
-				System.out.print("\n		" + parameter.getName());
-		}
-		/*if (constructor1 != null){
-			System.out.print("Constructor: " + constructor1.getName());
-			Class[] parameters = constructor1.getParameterTypes();
-			for (Class parameter : parameters)
-				System.out.println("\n		Parameter: " + parameter.getName());
-		}*/
-		
-		
+
 		//obtain fields
 		
 		Field[] classFields = classObject.getDeclaredFields();
@@ -79,7 +67,8 @@ public class Inspector {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			if ((recursive == true) && (field.getType() == Type.class)){
+			// supposed to recurse but it doesnt work
+			if ((recursive == true) && field.getType().isAssignableFrom(classObject)){
 				try {
 					inspect(field.get(obj), true);
 				} catch (IllegalArgumentException | IllegalAccessException e) {

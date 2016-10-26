@@ -1,4 +1,5 @@
 import java.lang.reflect.*;
+import java.util.Vector;
 public class Inspector {
 	public void inspect(Object obj, boolean recursive){
 		Class classObject = obj.getClass();
@@ -37,6 +38,7 @@ public class Inspector {
 
 		}
 		System.out.println("");
+		
 		// Constructors
 		Constructor[] constructors = classObject.getConstructors();
 		System.out.println("Constructors:");
@@ -55,7 +57,6 @@ public class Inspector {
 		
 		Field[] classFields = classObject.getDeclaredFields();
 		System.out.println("Fields:");
-		
 		for(Field field : classFields){
 			int temp = field.getModifiers();
 			System.out.print("		" + Modifier.toString(temp)
@@ -68,18 +69,14 @@ public class Inspector {
 				e.printStackTrace();
 			}
 			// supposed to recurse but it doesnt work
-			if ((recursive == true) && field.getType().isAssignableFrom(classObject)){
-				try {
-					inspect(field.get(obj), true);
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
 
 		}
+
 		
-		
-		
+		// handle hiearchy
+		/*
+		if (classObject.getSuperclass() != null){
+			inspect(classObject.getSuperclass(), false);
+		}*/
 	}
 }

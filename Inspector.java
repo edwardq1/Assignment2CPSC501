@@ -3,26 +3,34 @@ import java.util.Vector;
 public class Inspector {
 	public void inspect(Object obj, boolean recursive){
 		Class classObject = obj.getClass();
-		inspectClass(classObject);
-		inspectInterfaces(classObject);
-		inspectMethods(classObject);
-		inspectConstructors(classObject);
-		inspectFields(classObject, obj, recursive);
 		Class superClass = classObject.getSuperclass();
-
+		if (classObject.isArray()){
+			System.out.println("THIS IS AN ARRAY OF CLASSES");
+		}
+		else{
+			inspectClass(classObject);
+			inspectInterfaces(classObject);
+			inspectMethods(classObject);
+			inspectConstructors(classObject);
+			inspectFields(classObject, obj, recursive);
+		}
+		if ((superClass != null) && recursive == true){
+			System.out.println("******************Entering superclass******************");
+			inspect(classObject.getSuperclass(), false);
+		}
 		
 	}
+	//Inspect a class by getting its declaring class and superclass
 	public void inspectClass(Class classObject){
 		String className = classObject.getSimpleName();
 		// print the declaring class
 		System.out.println("Declaring class: " + className);
-		
 		Class superClass = classObject.getSuperclass();
 		className = superClass.getSimpleName();
 		System.out.println("Super class: " + className);
 
 	}
-	
+	//Inspect a class by getting its interfaces
 	public void inspectInterfaces(Class classObject){
 		// obtaining the interfaces
 		Class[] interfaces = classObject.getInterfaces();
@@ -71,23 +79,30 @@ public class Inspector {
 	//Method that will handle grabbing the fields of a class
 	public void inspectFields(Class classObject, Object object, Boolean recursive){
 		//obtain fields
+		Object o = null;
 		Field[] classFields = classObject.getDeclaredFields();
 		System.out.println("Fields:");
 		for(Field field : classFields){
 			field.setAccessible(true);
-			if (field.getType().isArray()){
-				try {
+			boolean isObject = field.getType().isPrimitive();
+			try {
+				o = field.get(object);
+			} catch (IllegalArgumentException | IllegalAccessException e1) {
+				e1.printStackTrace();
+			}
+			if (field.getType().isArray() && o != null){
 					System.out.println("	Array field: " + "\n		Component type: " + field.getType().getComponentType() + "\n		Name: " + 
-							field.getName() + "\n		Length: " + Array.getLength(field.get(object)));
+							field.getName() + "\n		Length: " + Array.getLength(o));
 					
 					System.out.print("		Contents: ");
-					for (int i = 0; i < Array.getLength(field.get(object)); i++){
-						System.out.print(Array.get(field.get(object), i) + ", ");
+					for (int i = 0; i < Array.getLength(o); i++){
+						System.out.print(Array.get(o, i) + ", ");
 					}
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+
+			}
+			else if ((!isObject) && recursive == true && o != null){
+				System.out.println("******************Entering object******************");
+				inspect(field.getType().getName(), false);
 			}
 			else{
 				int temp = field.getModifiers();
@@ -104,6 +119,8 @@ public class Inspector {
 			// supposed to recurse but it doesnt work
 		}
 	}
+	
+	
 	//Method that will handle grabbing the constructors of a class
 	public void inspectConstructors(Class classObject){
 		// Constructors
@@ -132,7 +149,7 @@ public class Inspector {
 			return method.getName();
 		return null;
 	}
-	
+	//Testing methods
 	public String testingVariable(Class object){
 		Field[] field = object.getDeclaredFields();
 		for (Field f : field)
@@ -141,7 +158,7 @@ public class Inspector {
 		return null;
 	}
 	
-	
+	//Testing methods
 	public String testSuperClass(Class object){
 		return object.getSuperclass().getSimpleName();
 	}

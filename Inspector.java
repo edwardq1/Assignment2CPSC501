@@ -7,10 +7,11 @@ public class Inspector {
 		inspectInterfaces(classObject);
 		inspectMethods(classObject);
 		inspectConstructors(classObject);
-		inspectFields(classObject, obj);
+		inspectFields(classObject, obj, recursive);
+		Class superClass = classObject.getSuperclass();
+
 		
 	}
-	
 	public void inspectClass(Class classObject){
 		String className = classObject.getSimpleName();
 		// print the declaring class
@@ -68,7 +69,7 @@ public class Inspector {
 	}
 	
 	//Method that will handle grabbing the fields of a class
-	public void inspectFields(Class classObject, Object object){
+	public void inspectFields(Class classObject, Object object, Boolean recursive){
 		//obtain fields
 		Field[] classFields = classObject.getDeclaredFields();
 		System.out.println("Fields:");
@@ -122,5 +123,21 @@ public class Inspector {
 			System.out.print("\n		Modifier: " + Modifier.toString(temp));
 			System.out.println();
 		}
+	}
+	
+	
+	public String testingMethod(Class object){
+		Method[] classMethods = object.getMethods();
+		for (Method method : classMethods)
+			return method.getName();
+		return null;
+	}
+	
+	public String testingVariable(Class object){
+		Field[] field = object.getDeclaredFields();
+		for (Field f : field)
+			return f.getName();
+	
+		return null;
 	}
 }

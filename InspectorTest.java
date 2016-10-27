@@ -29,4 +29,16 @@ public class InspectorTest {
 
 	}
 
+	@Test
+	public void testSuperClass(){
+		Inspector object = new Inspector();
+		String superClass = object.testSuperClass(ClassA.class);
+		assertEquals("Object", superClass);
+		superClass = object.testSuperClass(ClassB.class);
+		assertEquals("ClassC", superClass);
+		superClass = object.testSuperClass(ClassC.class);
+		assertEquals("ClassD", superClass);
+
+
+	}
 }

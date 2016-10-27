@@ -125,7 +125,7 @@ public class Inspector {
 		}
 	}
 	
-	
+	//Testing methods
 	public String testingMethod(Class object){
 		Method[] classMethods = object.getMethods();
 		for (Method method : classMethods)
@@ -139,5 +139,10 @@ public class Inspector {
 			return f.getName();
 	
 		return null;
+	}
+	
+	
+	public String testSuperClass(Class object){
+		return object.getSuperclass().getSimpleName();
 	}
 }

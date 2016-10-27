@@ -14,10 +14,10 @@ public class Inspector {
 			inspectConstructors(classObject);
 			inspectClassFields(classObject, obj, recursive);
 		}
-		if ((superClass != null) && recursive == true){
+	/*	if ((superClass != null) && recursive == true){
 			System.out.println("******************Entering superclass******************");
 			inspect(classObject.getSuperclass(), false);
-		}
+		}*/
 		
 	}
 	//Inspect a class by getting its declaring class and superclass
@@ -108,6 +108,13 @@ public class Inspector {
 			System.out.println("******************Entering object******************");
 			inspect(field.getType().getName(), false);
 		}
+		else if ((!isObject) && recursive == false && o != null)
+			try {
+				System.out.print("	" + field.getType().getSimpleName() + System.identityHashCode(field.get(object)));
+			} catch (IllegalArgumentException | IllegalAccessException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		else{
 			int temp = field.getModifiers();
 			System.out.print("	" + Modifier.toString(temp)

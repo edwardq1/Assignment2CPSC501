@@ -12,7 +12,7 @@ public class Inspector {
 			inspectInterfaces(classObject);
 			inspectMethods(classObject);
 			inspectConstructors(classObject);
-			inspectFields(classObject, obj, recursive);
+			inspectClassFields(classObject, obj, recursive);
 		}
 		if ((superClass != null) && recursive == true){
 			System.out.println("******************Entering superclass******************");
@@ -77,7 +77,7 @@ public class Inspector {
 	}
 	
 	//Method that will handle grabbing the fields of a class
-	public void inspectFields(Class classObject, Object object, Boolean recursive){
+	public void inspectClassFields(Class classObject, Object object, Boolean recursive){
 		//obtain fields
 		Object o = null;
 		Field[] classFields = classObject.getDeclaredFields();
@@ -90,34 +90,36 @@ public class Inspector {
 			} catch (IllegalArgumentException | IllegalAccessException e1) {
 				e1.printStackTrace();
 			}
-			if (field.getType().isArray() && o != null){
-					System.out.println("	Array field: " + "\n		Component type: " + field.getType().getComponentType() + "\n		Name: " + 
-							field.getName() + "\n		Length: " + Array.getLength(o));
-					
-					System.out.print("		Contents: ");
-					for (int i = 0; i < Array.getLength(o); i++){
-						System.out.print(Array.get(o, i) + ", ");
-					}
-
-			}
-			else if ((!isObject) && recursive == true && o != null){
-				System.out.println("******************Entering object******************");
-				inspect(field.getType().getName(), false);
-			}
-			else{
-				int temp = field.getModifiers();
-				System.out.print("	" + Modifier.toString(temp)
-						+ " " + field.getType() + " "+ field.getName() + " = ");
-				try {
-					System.out.print(field.get(object)+ "");
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			System.out.println();
+			inspectField(field, o, isObject, recursive, object);
 			// supposed to recurse but it doesnt work
 		}
+	}
+	public void inspectField(Field field, Object o, boolean isObject, boolean recursive, Object object){
+		if (field.getType().isArray() && o != null){
+			System.out.println("	Array field: " + "\n		Component type: " + field.getType().getComponentType() + "\n		Name: " + 
+					field.getName() + "\n		Length: " + Array.getLength(o));
+			
+			System.out.print("		Contents: ");
+			for (int i = 0; i < Array.getLength(o); i++){
+				System.out.print(Array.get(o, i) + ", ");
+			}
+		}
+		else if ((!isObject) && recursive == true && o != null){
+			System.out.println("******************Entering object******************");
+			inspect(field.getType().getName(), false);
+		}
+		else{
+			int temp = field.getModifiers();
+			System.out.print("	" + Modifier.toString(temp)
+					+ " " + field.getType() + " "+ field.getName() + " = ");
+			try {
+				System.out.print(field.get(object)+ "");
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println();
 	}
 	
 	
